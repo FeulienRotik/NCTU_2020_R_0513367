@@ -1,19 +1,17 @@
-# NCTU_2020_R_0513367
-#code at***https://www.kaggle.com/lefeulien/notebook0f66b16139
 1.INTRODUCTION
 
-Analysis of this data is primarily intended to determine the geographic distribution of dengue cases across Taiwan's provinces.
- Simultaneously with the visualization of the density distribution of mosquito larvae, providing convincing proof of the leading cause of dengue fever, 
- plus the influence of population density has led to the difference in rate as well as the number of cases between Taiwan's provinces.
+According to the computerized database of the surveillance system by Taiwan Center for
+Disease Control (Taiwan-CDC) [29], in the period of 2006 to 2012, there were 10,094 confirmed cases   of
+dengue virus infections, or an average of about 1442 cases per year. However, from 2012 to 2018, the Taiwan-CDC recorded 63,471 confirmed cases of dengue, or an average of about 9067 cases per year.
+Thus, the annual average number of dengue cases has increased by 529% in the past seven years
+compared with the period from 2006 to 2012.
+
+
+Analysis of this data is primarily intended to determine the geographic distribution of dengue cases across Taiwan's provinces. Simultaneously with the visualization of the density distribution of mosquito larvae, providing convincing proof of the leading cause of dengue fever, plus the influence of population density has led to the difference in rate as well as the number of cases between Taiwan's provinces.
 
 2.Data Source
 
-Dengue case surveillance data: In Taiwan, dengue fever is classified as a notifiable infectious disease 
-and suspected cases must be reported to a clinic for diagnosis within 24 hours.
-These data obtained from the web-based National Infectious Disease Statistics System 
-(https://nidss.cdc.gov.tw/en/SingleDisease.aspx?dc=1&dt=4&disease=061&position=1)
-
-under the Notifiable Disease Surveillance System (NDSS) of the Taiwan Center for Disease Control(from January 2012 to May 2019).
+Dengue case surveillance data: In Taiwan, dengue fever is classified as a notifiable infectious disease and suspected cases must be reported to a clinic for diagnosis within 24 hours.These data obtained from the web-based National Infectious Disease Statistics System (https://nidss.cdc.gov.tw/en/SingleDisease.aspx?dc=1&dt=4&disease=061&position=1)under the Notifiable Disease Surveillance System (NDSS) of the Taiwan Center for Disease Control(from January 2012 to May 2019).
 
 
 3.Project Questions 
@@ -24,12 +22,14 @@ Which is the region with the most dengue cases?
 
 Analysis the relationship between number of Dengue cases with mosquito density and provincial population density
 
-4.Code Explanation
+4. Code explanation
+#code at***https://www.kaggle.com/lefeulien/notebook0f66b16139
 
 library(tidyverse) # metapackage of all tidyverse packages
 list.files(path = "../input")
 library(caret)
 install.packages("geojsonio")
+
 library("geojsonio")
 require("dplyr")
 require("stringr")
@@ -42,7 +42,7 @@ require("mapproj")
 require("sf")
 require("RColorBrewer")
 
-path = "../input/data-deng-bi/plotTW.csv"#input processed data
+path = "../input/data-deng-bi/plotTW.csv"
 df <- read.csv(path, h=T)
 df <-data.frame(df)
 distill_data <- df
@@ -50,7 +50,7 @@ kable(distill_data)
 summary(distill_data)
 
 taiwan.map <- st_read("../input/tw-map-shp/gadm36_TWN_2.shp")#Reading layer from data source ,input taiwan shape
-print(taiwan.map, n = 22)#Taiwan shape with 22 provinces
+print(taiwan.map, n = 22)
 
 plot(taiwan.map[1])
 
@@ -73,8 +73,8 @@ head(distill_data)
 tmp <- (min(distill_data$Dengue) - max(distill_data$Dengue))
 tmp
 
-distill_data$Dengue_Normalize <- (distill_data$Dengue - min(distill_data$Dengue)) / (max(distill_data$Dengue) - min(distill_data$Dengue))
 #Normalization data of Dengue cases
+distill_data$Dengue_Nornalize <- (distill_data$Dengue - min(distill_data$Dengue)) / (max(distill_data$Dengue) - min(distill_data$Dengue))
 
 distill_data
 
@@ -82,7 +82,8 @@ my.taiwan.map <- taiwan.map[c("NAME_2", "geometry")]
 my.taiwan.map$NAME_2 <- as.character(my.taiwan.map$NAME_2)
 head(my.taiwan.map)
 
-#join the dengue case and BI data to the left of data of taiwan shape
+
+#join the dengue cases and BI data to the left of data of taiwan shape
 my.taiwan.map.data <- left_join(my.taiwan.map, distill_data,
                                 c("NAME_2" = "ID"))
 
@@ -91,7 +92,7 @@ dim(my.taiwan.map.data)
 
 #plot Dengue cases distribution in spectral density
 ggplot(data = my.taiwan.map.data) +
-  geom_sf(aes(fill = Dengue_Normalize)) +
+  geom_sf(aes(fill = Dengue_Nornalize)) +
   # scale_fill_distiller(name="Count", palette = "RdYlGn")
   scale_fill_distiller(palette = "Spectral", name = "Dengue Cases")
 
@@ -108,9 +109,10 @@ ggplot(data = my.taiwan.map.data) +
                     values = c("lightyellow", "yellow","orange", "red"),
                     labels = c("0-60","61-500","501-1000",">1001"))
 
-my.taiwan.map.data$BI3 <- cut(my.taiwan.map.data$BI,breaks = c(-Inf, 1, 2, 3, Inf),right = FALSE)#plot dengue cases distribution in 4 density levels
+my.taiwan.map.data$BI3 <- cut(my.taiwan.map.data$BI,breaks = c(-Inf, 1, 2, 3, Inf),right = FALSE)# divide into 4 section for clearly revealization
 
 #BI is Mosquito larva density parameter, eg 3 reveal has 3 larvas each cubic meter of water
+
 #plot Mosquito larva density distribution 
 ggplot(data = my.taiwan.map.data) +
   geom_sf(aes(fill = BI)) +
@@ -125,13 +127,11 @@ ggplot(data = my.taiwan.map.data) +
                     values = c("lightyellow", "yellow","orange", "red"),
                     labels = c("0-1","1-2","2-3","3-4"))
 
+
 5.Result analysis
 
-From the visualization graphs we can see the significant relationship between about Mosquito larva density and the number cases of Dengue, 
- It also reveal an important relationship between cases of Dengue and population density with temperature of each Taiwan's province.
- 
- We can see that BI, mosquito larval distribution density is an important parameter affecting the number of dengue cases in the regions. 
- However, there are some exceptions. For example, the Miaoli area has a high density of mosquito larvae but the incidence is low,
- most likely because this is a sparsely populated area, there are many mosquitoes in the wilderness, so there is no Affect the dengue fever.
+From the visualization graphs  we can see the significant relationship between about Mosquito larva density and the number cases of Dengue in Taiwan map. It also reveal an important relationship between cases of Dengue and population density with temperature of each Taiwan's province.
 
-Similar to the Xinbei area with low mosquito density but high prevalence, it can only be explained that because it's high population density.
+We can see that BI, mosquito larval distribution density is an important parameter affecting the number of dengue cases in the regions.  However, there are some exceptions. For example, the Miaoli area has a high density of mosquito larvae but the incidence is low, most likely because this is a sparsely populated area, there are many mosquitoes in the wilderness, so there is no Affect the dengue fever.
+
+Similarly, the Xinbei area with low mosquito density but high prevalence, it can only be explained because it's high population density.
