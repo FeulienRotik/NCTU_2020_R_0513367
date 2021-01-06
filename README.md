@@ -100,7 +100,7 @@ ggplot(data = my.taiwan.map.data) +
   geom_sf(aes(fill = Dengue_Normalize)) +
   scale_fill_distiller(palette = "Spectral", name = "Dengue Cases")
 
-# divide into 4 section for clearly revealization
+#divide into 4 section for clearly revealization
 my.taiwan.map.data$Dengue3 <- cut(my.taiwan.map.data$Dengue,breaks = c(-Inf, 61, 501, 1001, Inf),right = FALSE)
 
 #plot dengue cases distribution in 4 density levels
