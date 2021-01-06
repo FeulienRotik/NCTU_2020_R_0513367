@@ -1,5 +1,6 @@
 # NCTU_2020_R_0513367
 #code at***https://www.kaggle.com/lefeulien/notebook0f66b16139
+
 1.INTRODUCTION
 
 Analysis of this data is primarily intended to determine the geographic distribution of dengue cases across Taiwan's provinces.
@@ -92,7 +93,6 @@ dim(my.taiwan.map.data)
 #plot Dengue cases distribution in spectral density
 ggplot(data = my.taiwan.map.data) +
   geom_sf(aes(fill = Dengue_Normalize)) +
-  # scale_fill_distiller(name="Count", palette = "RdYlGn")
   scale_fill_distiller(palette = "Spectral", name = "Dengue Cases")
 
 my.taiwan.map.data$Dengue3 <- cut(my.taiwan.map.data$Dengue,breaks = c(-Inf, 61, 501, 1001, Inf),right = FALSE)# divide into 4 section for clearly revealization
@@ -114,7 +114,6 @@ my.taiwan.map.data$BI3 <- cut(my.taiwan.map.data$BI,breaks = c(-Inf, 1, 2, 3, In
 #plot Mosquito larva density distribution 
 ggplot(data = my.taiwan.map.data) +
   geom_sf(aes(fill = BI)) +
-  # scale_fill_distiller(name="Count", palette = "RdYlGn")
   scale_fill_distiller(palette = "Spectral", name = "Mosquito larva density distribution")
 
 #plot Mosquito larva distribution divided into 4 density levels
