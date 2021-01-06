@@ -50,7 +50,9 @@ distill_data <- df
 kable(distill_data)
 summary(distill_data)
 
-taiwan.map <- st_read("../input/tw-map-shp/gadm36_TWN_2.shp")#Reading layer from data source ,input taiwan shape
+#Reading layer from data source ,input taiwan shape
+taiwan.map <- st_read("../input/tw-map-shp/gadm36_TWN_2.shp")
+
 print(taiwan.map, n = 22)#Taiwan shape with 22 provinces
 
 plot(taiwan.map[1])
@@ -60,6 +62,7 @@ plot(st_geometry(taiwan.map))
 st_geometry(taiwan.map)
 
 #plot taiwan map with 22 provinces
+
 ggplot(data = taiwan.map) +
   geom_sf(aes(fill = NAME_2)) +
   scale_fill_manual(name = "?????????",
@@ -80,8 +83,10 @@ distill_data$Dengue_Normalize <- (distill_data$Dengue - min(distill_data$Dengue)
 distill_data
 
 my.taiwan.map <- taiwan.map[c("NAME_2", "geometry")]
+
 my.taiwan.map$NAME_2 <- as.character(my.taiwan.map$NAME_2)
 head(my.taiwan.map)
+
 
 #join the dengue case and BI data to the left of data of taiwan shape
 my.taiwan.map.data <- left_join(my.taiwan.map, distill_data,
@@ -95,7 +100,8 @@ ggplot(data = my.taiwan.map.data) +
   geom_sf(aes(fill = Dengue_Normalize)) +
   scale_fill_distiller(palette = "Spectral", name = "Dengue Cases")
 
-my.taiwan.map.data$Dengue3 <- cut(my.taiwan.map.data$Dengue,breaks = c(-Inf, 61, 501, 1001, Inf),right = FALSE)# divide into 4 section for clearly revealization
+# divide into 4 section for clearly revealization
+my.taiwan.map.data$Dengue3 <- cut(my.taiwan.map.data$Dengue,breaks = c(-Inf, 61, 501, 1001, Inf),right = FALSE)
 
 #plot dengue cases distribution in 4 density levels
 ggplot(data = my.taiwan.map.data) +
@@ -108,9 +114,11 @@ ggplot(data = my.taiwan.map.data) +
                     values = c("lightyellow", "yellow","orange", "red"),
                     labels = c("0-60","61-500","501-1000",">1001"))
 
-my.taiwan.map.data$BI3 <- cut(my.taiwan.map.data$BI,breaks = c(-Inf, 1, 2, 3, Inf),right = FALSE)#plot dengue cases distribution in 4 density levels
+#plot dengue cases distribution in 4 density levels
+my.taiwan.map.data$BI3 <- cut(my.taiwan.map.data$BI,breaks = c(-Inf, 1, 2, 3, Inf),right = FALSE)
 
 #BI is Mosquito larva density parameter, eg 3 reveal has 3 larvas each cubic meter of water
+
 #plot Mosquito larva density distribution 
 ggplot(data = my.taiwan.map.data) +
   geom_sf(aes(fill = BI)) +
